@@ -166,6 +166,7 @@ try{
   }
 
 
+
   // iteracion dentro de la lista de peliculas
 
   // de esta manera devovlera una promesa
@@ -178,18 +179,37 @@ try{
   // Selectores en jQuery se identifica con un signo $ y es un elemnto del DOM
   // const $home=$('.home .list #item');
 
+
   // de esta manera con async await
   //selectores en js
+  // funcion para ver si hay cache o no hay
+  async function cacheExist(category){
+    const listName=`${category}List`;//${}representa una variable dinamimca
+    const cacheList=window.localStorage.getItem(listName);
+    if(cacheList){
+      return JSON.parse(cacheList);
+    }
+    const{data:{movies:data}}=await getData(`${BASE_API}list_movies.json?genre=${category}`)
+    window.localStorage.setItem(listName,JSON.stringify(data))
+    return data;
 
-  const {data:{movies:actionList}}=await getData(`${BASE_API}list_movies.json?genre=action`)
+  }
+  // const {data:{movies:actionList}}=await getData(`${BASE_API}list_movies.json?genre=action`)
+  const actionList=await cacheExist('action');
+  // creando cache con localStorage
+  // window.localStorage.setItem('actionList',JSON.stringify(actionList))
   const $actionContainer=document.querySelector('#action');
   renderMovieList(actionList,$actionContainer,'action');
 
-  const {data:{movies:dramaList}}=await getData(`${BASE_API}list_movies.json?genre=drama`)
+  // const {data:{movies:dramaList}}=await getData(`${BASE_API}list_movies.json?genre=drama`)
+  // window.localStorage.setItem('dramaList',JSON.stringify(dramaList))
+  const dramaList=await cacheExist('drama');
   const $dramaContainer=document.getElementById('drama');
   renderMovieList(dramaList,$dramaContainer,'drama');
 
-  const {data:{movies:animationList}}=await getData(`${BASE_API}list_movies.json?genre=animation`)
+  // const {data:{movies:animationList}}=await getData(`${BASE_API}list_movies.json?genre=animation`)
+  // window.localStorage.setItem('animationList',JSON.stringify(animationList))
+  const animationList=await cacheExist('animation');
   const $animationContainer=document.getElementById('animation');
   renderMovieList(animationList,$animationContainer,'animation');
 
