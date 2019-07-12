@@ -1,0 +1,143 @@
+Promesas
+Las promesas sirven para manejar nuestro código asíncrono.
+
+“Una Promesa es un objeto que representa la terminación o el fracaso eventual de una operación asíncrona”, o dicho de forma más cotidiana, se va a mandar una función para ver si falla o se ejecuta con éxito.
+
+Al crear una Promesa debemos pasarle por argumento la función que vamos a ejecutar de forma asíncrona, dicha función va a recibir dos parámetros para evaluar si se ejecuto bien la función o si fallo.
+
+Nuestra promesa va a tener dos métodos para saber si todo salió bien o fallo. El método then se encarga cuando la promesa se cumplió exitosamente, mientras que el método catch se encarga cuando la promesa falla.
+
+Dentro de JavaScript tenemos dos funciones para ejecutar una función después de algún tiempo, estas funciones son:
+
+• setInterval: ejecutara una función cada x tiempo.
+• setTimeout: ejecutara una función después de x tiempo.
+
+Si queremos resolver varias promesas a la misma vez, Promise cuenta con un método llamado all que recibe un array de promesas como parámetro. Este método se termina cuando todas las promesas del array se terminan de ejecutar. Si una de las promesas falla entonces el método all saltara un error mandándote al método catch.
+
+Promise también cuenta con el método race que te regresa los resultados de la promesa que termine primero.
+
+// echo "# jqueryajs" >> README.md
+// git init
+// git add README.md
+// git commit -m "first commit"
+// git remote add origin git@github.com:RicardoDeAngelis/jqueryajs.git
+// git push -u origin master
+
+// Declaración de una promesa
+// Las promesas son utiles para manejar nuestro código asincrono (código que en un determinado momento
+// puede resolverse correctamente o fallar. Como una petición a una API)
+//
+// Las promesas son objetos que representan el exito o fracaso de una operacon asincrona
+//
+// Al crear una promesa debemos pasarle como argumento una función, la cual contiene instrucciones que se ejecutaran de manera asincrona
+//
+// El primer parametro es una función que se ejecutará si la promesa se resuelve correctamente,
+// El segundo parametro es una función que se ejecutara si la promesa falla
+const getUser = newPromise(function(resolve, reject) {
+	// Simular una llamada a una API via AJAX
+	// Este código se ejecuta despues de 3000 milisegundos. No bloquea las instrucciones que están fuera de el.
+	setTimeout(function() {
+		// Luego de 3 segundos se ejecuta este bloque de código.
+		// Simulamos que la promesa se resuleve correctamente invocando la función del primer parametro
+		let datos = ['María', 'Demetrio', 'Miguel Angel', 'Alejandro'];
+		// Podemos enviar parametros a dicha función para que la  parte solicitante haga algo con ellos.
+		// En este caso serían los resultados obtenidos a través de la consulta a la API
+		// resolve()
+		resolve(datos)
+		//
+		// Si la promesa falla debo ejecutar la función del segundo parametro
+		// Podemos enviar parametros a dicha función para que la parte solicitante tenga mayor contexto sobre lo que ha pasado
+		// reject()
+		// reject('Error interno en el servidor')
+	}, 3000)
+})
+
+// Invocar una promesa
+getUser
+	.then(function(data) {
+		// Esta función se ejecuta si la promesa se resuelve
+		// El valor devuelto por la promesa depende internamente de su implementación.
+		console.log('Excelente, la promesa se resolvío satisfactoriamente: ' + data)
+	})
+	.catch(function(error) {
+		// Esta función se ejecuta si la promesa falla
+		// Es como un decorador para hacer algo a nivel de interfaz como una notificación.
+		// El valor devuelto de error, depende de la implementación interna de la promesa (invocacion reject())
+		console.error('Lo sentimos, la promesa no se resolvió: ' + error)
+	})
+
+
+// Declaración de promesas adicionales para que posteriormente se ejecuten de forma paralela
+// En este caso se simulan operaciones asincronas con tiempo en milisegundos diferentes
+const getDias = newPromise((resolve, reject) => {
+	setTimeout(() => {
+		let dias = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes']
+		//resolve(dias)
+		reject('Error en el servidor de DÍAS')
+	}, 5000)
+})
+const getEstaciones = newPromise((resolve, reject) => {
+	setTimeout(() => {
+		let estaciones = ['Primavera', 'Verano', 'Otoño', 'Invierno']
+		resolve(estaciones)
+		// reject('Error en el servidor de ESTACIONES')
+	}, 1000)
+})
+
+
+// Ejecutar promesas en paralelo
+// Inspeccionar que todas las promesas se resuelvan para realizar una tarea determinada
+// Una analogía sería como una transacción de promesas
+Promise.all([getUser, getEstaciones, getDias])
+	.then(function(data) {
+		// Esta función se ejecuta si y solo si se resuelven todas las promesas
+		console.log('Felicidades las promesas se resolvieron correctamente')
+		// La data contiene un array con los datos devueltos por cada una de las promesas. Si es que
+		// su interfaz interna asi lo decide (que envien datos)
+		console.log(data)
+	})
+	.catch(function(error) {
+		// Esta función se ejecuta si alguna de las promesas listadas es rechazada
+		console.error('Rayos, alguna de las promesas falló')
+		// En este caso el error devuelto corresponde a la promesa que ha fallado
+		console.error(error)
+	})
+
+
+// Ejecutar promesas en paralelo por carrera
+// inspeccionar que promesa se resuelve primero y realizar una tarea determinada
+//
+// Una analogía sería, que todas las promesas se comuniquen a diferentes servidores de replica apuntando al mismo recurso.
+// dependiendo de que servidor responda primero, se resolvera su promesa relacionada.
+// Ante esto, damos por terminada la ejecución en paralelo
+Promise.race([getUser, getEstaciones, getDias])
+	.then(data => {
+		// Se ejecuta esta función con la data devuelta por la promesa que se resolvío primero
+		// Despues de eso. se da por terminado el proceso.
+		console.log('Felicidades, alguna de las promesas se ha resulto primero que las demás')
+		console.log(data)
+	})
+	.catch(error => {
+		// Esta función se ejecuta si la promesa en atenderse primero falla
+		console.error('Lo sentimos, una de las promesas ha fallado')
+		console.info(error)
+	})
+
+
+	Selectores
+Un selector nos sirve para poder manipular un objeto del DOM, puedes buscar dicho objeto ya sea por su id, clase, atributo, etc.
+
+Para PlatziVideo necesitamos un selector de un contenedor para ponerle dentro la lista de películas.
+
+En jQuery hacemos un selector de la siguiente forma:
+
+const $home = $(‘ .home ’);
+Por convención una variable que este represente un objeto del DOM lleva el signo $, esto es para tener claro que estamos manipulando un objeto del DOM y no algún tipo de información o dato.
+
+Dentro de JavaScript existen distintas funciones para hacer selectores, entre ellas se encuentra:
+
+• getElementById: recibe como parámetro el id del objeto del DOM que estás buscando. Te regresa un solo objeto.
+• getElementsByTagName: recibe como parámetro el tag que estas buscando y te regresa una colección html de los elementos que tengan ese tag.
+• getElementsByClassName: recibe como parámetro la clase y te regresa una colección html de los elementos que tengan esa clase.
+• querySelector: va a buscar el primer elemento que coincida con el selector que le pases como parámetro.
+• querySelectorAll: va a buscar todos los elementos que coincidan con el selector que le pases como parámetro.
