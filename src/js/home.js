@@ -185,12 +185,14 @@ try{
   // funcion para ver si hay cache o no hay
   async function cacheExist(category){
     const listName=`${category}List`;//${}representa una variable dinamimca
-    const cacheList=window.localStorage.getItem(listName);
+    const cacheList=window.sessionStorage.getItem(listName);
     if(cacheList){
       return JSON.parse(cacheList);
     }
     const{data:{movies:data}}=await getData(`${BASE_API}list_movies.json?genre=${category}`)
-    window.localStorage.setItem(listName,JSON.stringify(data))
+    // podemos usar sessionStorage para que la pagina borre su cache cuando cierre la ventana
+    // podemos usar localStorage para que la pagina no borre su cache cuando cierre la ventana
+    window.sessionStorage.setItem(listName,JSON.stringify(data))
     return data;
 
   }
